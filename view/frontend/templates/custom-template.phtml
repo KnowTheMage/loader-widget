@@ -1,0 +1,82 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+
+$loader = $block->getViewFileUrl('Know_Module/images/custom-loader.gif');
+?>
+<div class="widget block block-static-block">
+    <div class="field">
+        <p class="cms-content-important" id="a-paragraph">Lorem Ipsum is simply dummy text of the printing and
+            typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+    </div>
+    <div class="action-toolbar field">
+        <button id="btn-loader-widget" class="action primary"><span>Initiate First loader</span></button>
+    </div>
+</div>
+<div class="widget block block-static-block">
+    <div class="action-toolbar field">
+        <button id="body-loader-trigger-btn" class="action primary"><span>Default Loader Widget trigger</span></button>
+    </div>
+</div>
+<div class="widget block block-static-block">
+    <div id="another-loader" data-mage-init='{"loader": { "icon": "<?= $loader ?>" }}'>
+        <h3>New loader</h3>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        <div class="action-toolbar field">
+            <button id="another-loader-btn" class="action primary"><span>Trigger</span></button>
+        </div>
+    </div>
+</div>
+<script>
+    requirejs([
+        'jquery',
+        'loader',
+        'domReady!'
+    ], function ($) {
+        'use strict';
+
+        let aParagraph = $('#a-paragraph');
+        aParagraph.loader({
+            icon: '<?= $loader ?>',
+            logo: '<?= $block->getBaseUrl() ?>media/logo/stores/1/KnowtheMage.png',
+            texts: {
+                imgAlt: 'Loading your content...',
+                loaderText: 'Content loading in progress, please wait!'
+            },
+            template: '<div class="loading-mask" data-role="loader">' +
+                    '<div class="loader">' +
+                        '<img src="<%- data.icon %>" alt="<%- data.texts.imgAlt %>"/>' +
+                        '<p style="display: block;"><%- data.texts.loaderText %></p>' +
+                        '<img src="<%- data.logo %>" alt="<%- data.texts.imgAlt %>" style="margin-top: 135px;"/>' +
+                    '</div>' +
+                '</div>'
+        });
+
+        $("#btn-loader-widget").on("click", function () {
+            aParagraph.loader('show');
+            setTimeout(function () {
+                aParagraph.loader('hide');
+            }, 2500);
+        });
+
+        $("body").loader({
+            icon: '<?= $loader ?>'
+        });
+        $("#body-loader-trigger-btn").on("click", function () {
+            $("body").trigger("processStart");
+            setTimeout(function () {
+                $("body").trigger("processStop");
+            }, 2500);
+        });
+
+        $("#another-loader-btn").on("click", function () {
+            $("#another-loader").loader("show");
+            setTimeout(function () {
+                $("#another-loader").loader("hide");
+            }, 2500);
+        });
+
+        $("body").on("processStop", function () {
+            alert("Loading completed!");
+        });
+    });
+</script>
